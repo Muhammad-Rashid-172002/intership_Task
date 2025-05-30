@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intership_task/views/screen/auth_model/Google_auth_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class Congratsscreen extends StatefulWidget {
@@ -12,6 +13,11 @@ class _CongratsscreenState extends State<Congratsscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Congratulations'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,7 +27,7 @@ class _CongratsscreenState extends State<Congratsscreen> {
               width: 200,
               height: 200,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 120),
             Text(
               'Thank You\n we appreciate your \n for trusting us!',
               textAlign: TextAlign.center,
@@ -32,13 +38,20 @@ class _CongratsscreenState extends State<Congratsscreen> {
               textAlign: TextAlign.center,
               text: TextSpan(
                 text:
-                    'We are committed to ensuring thatyour personal information remains safeand confidential.!',
+                    'We are committed to ensuring that your personal information remains safeand confidential.!',
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ),
-            SizedBox(height: 150),
+            SizedBox(height: 180),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GoogleAuthScreen(),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,

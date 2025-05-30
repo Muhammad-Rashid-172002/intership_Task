@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intership_task/views/screen/home/onboardingScreen/SelectDOB.dart';
 
@@ -50,12 +52,37 @@ class _HightweightscreenState extends State<Hightweightscreen> {
     );
   }
 
+  Future<void> saveHeightWeightToFirebase(String height, String weight) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+          'height': height,
+          'weight': weight,
+        }, SetOptions(merge: true));
+
+        print("Height and Weight saved successfully.");
+      } catch (e) {
+        print("Error saving height/weight: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save height and weight')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('User is not logged in')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Height & Weight'),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
       ),
       body: Center(
         child: Column(
@@ -188,24 +215,24 @@ class _HightweightscreenState extends State<Hightweightscreen> {
             SizedBox(height: 150),
             // Elevated Button
             ElevatedButton(
-              onPressed: () {
-                if (widget.selectedGender.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => Selectdob(
-                            selectedGender: widget.selectedGender,
-                            height: "$selectedFeet ft $selectedInches in",
-                            weight: "$selectedWeight lbs",
-                          ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select a Hight & Weight')),
-                  );
-                }
+              onPressed: () async {
+                String height = "$selectedFeet ft $selectedInches in";
+                String weight = "$selectedWeight lbs";
+
+                // Save height and weight to Firestore
+                await saveHeightWeightToFirebase(height, weight);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => Selectdob(
+                          selectedGender: widget.selectedGender,
+                          height: height,
+                          weight: weight,
+                        ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,

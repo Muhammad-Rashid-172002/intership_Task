@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intership_task/views/screen/home/onboardingScreen/congratsscreen.dart';
 
@@ -58,12 +60,56 @@ class _SelectdobState extends State<Selectdob> {
     );
   }
 
+  // ✅ Save DOB + previous info to Firestore
+  Future<void> saveUserInfoToFirebase() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final dob =
+          "$selectedDay-${selectedMonth.toString().padLeft(2, '0')}-$selectedYear";
+
+      try {
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+          'gender': widget.selectedGender,
+          'height': widget.height,
+          'weight': widget.weight,
+          'DOB': dob,
+        }, SetOptions(merge: true));
+
+        print("Saved to Firestore:");
+        print("Gender: ${widget.selectedGender}");
+        print("Height: ${widget.height}");
+        print("Weight: ${widget.weight}");
+        print("DOB: $dob");
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("DOB saved successfully")));
+
+        // Go to next screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Congratsscreen()),
+        );
+      } catch (e) {
+        print("Error saving DOB: $e");
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error saving DOB")));
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("User not signed in")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Select Date of Birth"),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -78,15 +124,15 @@ class _SelectdobState extends State<Selectdob> {
             textAlign: TextAlign.center,
             text: TextSpan(
               text:
-                  'This activity level helps you to tailoryour fitness insights!',
+                  'This activity level helps you to tailor your fitness insights!',
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
           ),
-          SizedBox(height: 100),
+          const SizedBox(height: 100),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Day Container
+              // Day Picker
               Container(
                 width: 100,
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 6),
@@ -119,7 +165,7 @@ class _SelectdobState extends State<Selectdob> {
                 ),
               ),
 
-              // Month Container
+              // Month Picker
               Container(
                 width: 100,
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 6),
@@ -142,7 +188,7 @@ class _SelectdobState extends State<Selectdob> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     _buildPicker(
-                      items: [
+                      items: const [
                         "Jan",
                         "Feb",
                         "Mar",
@@ -165,7 +211,7 @@ class _SelectdobState extends State<Selectdob> {
                 ),
               ),
 
-              // Year Container
+              // Year Picker
               Container(
                 width: 100,
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 6),
@@ -200,19 +246,9 @@ class _SelectdobState extends State<Selectdob> {
             ],
           ),
           const SizedBox(height: 200),
-          //Elevated Button
           ElevatedButton(
-            onPressed: () {
-              final dob =
-                  "$selectedDay-${selectedMonth.toString().padLeft(2, '0')}-$selectedYear";
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text("DOB Selected: $dob")));
-              // You can pass `dob` to the next screen if needed
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Congratsscreen()),
-              );
+            onPressed: () async {
+              await saveUserInfoToFirebase();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,

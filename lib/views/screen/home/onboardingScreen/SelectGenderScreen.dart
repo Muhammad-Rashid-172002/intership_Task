@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intership_task/views/screen/home/onboardingScreen/Hight&WeightScreen.dart';
 
@@ -42,12 +44,39 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
     );
   }
 
+  Future<void> saveGenderToFirebase(String gender) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      print("Saving gender for user: ${user.uid}");
+      try {
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+          'gender': gender,
+        }, SetOptions(merge: true));
+
+        print("Gender saved: $gender");
+      } catch (e) {
+        print("Error saving gender: $e");
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to save gender: $e')));
+      }
+    } else {
+      print("No user logged in");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('User is not logged in')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Gender'),
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: Center(
         child: Column(
@@ -63,14 +92,11 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
             ),
             const SizedBox(height: 20),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: RichText(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                'This step ensures that your\nnutrition plan is tailored just for you.',
                 textAlign: TextAlign.center,
-                text: TextSpan(
-                  text:
-                      'This step ensures that your\nnutrition plan is tailored just for you.',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ),
             const SizedBox(height: 100),
@@ -84,8 +110,10 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
             const SizedBox(height: 200),
 
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (selectedGender != null) {
+                  await saveGenderToFirebase(selectedGender!);
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
