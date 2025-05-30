@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -16,7 +18,8 @@ class _HomescreenState extends State<Homescreen> {
   bool _isScanning = false;
   final ImagePicker _picker = ImagePicker();
 
-  // Sample nutrition info
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   final Map<String, Map<String, String>> nutritionInfo = {
     "banana": {
       "Calories": "105",
@@ -37,6 +40,47 @@ class _HomescreenState extends State<Homescreen> {
       "Potassium": "6% of the RDI",
     },
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _setupNotifications();
+  }
+
+  void _setupNotifications() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission();
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+    const initSettings = InitializationSettings(android: androidSettings);
+
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'default_channel',
+              'Default',
+              importance: Importance.high,
+              priority: Priority.high,
+            ),
+          ),
+        );
+      }
+    });
+  }
 
   Future<void> _scanImage() async {
     setState(() {
@@ -64,6 +108,24 @@ class _HomescreenState extends State<Homescreen> {
         _labels = labels;
         _isScanning = false;
       });
+
+      // 🔔 Send notification with labels
+      if (_labels.isNotEmpty) {
+        final labelNames = _labels.map((l) => l.label).join(', ');
+        flutterLocalNotificationsPlugin.show(
+          0,
+          'Scan Complete',
+          'You scanned: $labelNames',
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'default_channel',
+              'Default',
+              importance: Importance.max,
+              priority: Priority.high,
+            ),
+          ),
+        );
+      }
     } catch (e) {
       setState(() => _isScanning = false);
       ScaffoldMessenger.of(
