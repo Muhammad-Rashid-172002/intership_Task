@@ -39,14 +39,20 @@ dependencies:
   firebase_core: ^3.13.1
   google_sign_in: ^6.3.0
   cloud_firestore: ^5.6.8
-  google_mlkit_image_labeling: ^0.14.1
-  image_picker: ^1.1.2
   firebase_messaging: ^15.2.6
+  image_picker: ^1.1.2
   flutter_local_notifications: ^19.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_icon/unnamed.png"
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -71,6 +77,7 @@ flutter:
     - assets/animation assets/Animation - 1748579152630.json
     - assets/animation assets/congrats.json
     - assets/assets images/google.png
+    - assets/app_icon/unnamed.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

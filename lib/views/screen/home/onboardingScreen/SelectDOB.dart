@@ -60,7 +60,7 @@ class _SelectdobState extends State<Selectdob> {
     );
   }
 
-  // ✅ Save DOB + previous info to Firestore
+  //  Save DOB + previous info to Firestore
   Future<void> saveUserInfoToFirebase() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {

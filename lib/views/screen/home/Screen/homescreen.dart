@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:intership_task/views/screen/home/Screen/stripe_payment/stripe_payment.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -14,30 +14,25 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   File? _image;
-  List<ImageLabel> _labels = [];
-  bool _isScanning = false;
+  String? _detectedFruit;
+  bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
 
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
+  //  Nutrition info includes RS now
   final Map<String, Map<String, String>> nutritionInfo = {
-    "banana": {
-      "Calories": "105",
-      "Vitamin C": "17% of the RDI",
-      "Vitamin B6": "22% of the RDI",
-      "Potassium": "12% of the RDI",
-    },
     "carrot": {
       "Calories": "41",
       "Vitamin A": "334% of the RDI",
       "Vitamin K": "16% of the RDI",
       "Fiber": "2.8g",
-    },
-    "apple": {
-      "Calories": "95",
-      "Vitamin C": "14% of the RDI",
-      "Fiber": "4g",
-      "Potassium": "6% of the RDI",
+      "Potassium": "7% of the RDI",
+      "Carbohydrates": "9.6g",
+      "Sugar": "4.7g",
+      "Protein": "0.9g",
+      "Fat": "0.2g",
+      "RS": "100",
     },
   };
 
@@ -54,68 +49,34 @@ class _HomescreenState extends State<Homescreen> {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
+      'assets/app_icon/unnamed.png',
     );
     const initSettings = InitializationSettings(android: androidSettings);
 
     await flutterLocalNotificationsPlugin.initialize(initSettings);
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'default_channel',
-              'Default',
-              importance: Importance.high,
-              priority: Priority.high,
-            ),
-          ),
-        );
-      }
-    });
+    print('Notifications initialized');
   }
 
-  Future<void> _scanImage() async {
-    setState(() {
-      _isScanning = true;
-      _labels = [];
-    });
+  Future<void> _pickImage() async {
+    setState(() => _isLoading = true);
 
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
-      if (pickedFile == null) {
-        setState(() => _isScanning = false);
-        return;
-      }
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+          _detectedFruit = "carrot"; // Simulated detection
+        });
 
-      final inputImage = InputImage.fromFilePath(pickedFile.path);
-      final imageLabeler = ImageLabeler(
-        options: ImageLabelerOptions(confidenceThreshold: 0.5),
-      );
-      final labels = await imageLabeler.processImage(inputImage);
-      await imageLabeler.close();
+        print('Image picked: ${pickedFile.path}');
+        print('Detected fruit: carrot');
 
-      setState(() {
-        _image = File(pickedFile.path);
-        _labels = labels;
-        _isScanning = false;
-      });
-
-      // 🔔 Send notification with labels
-      if (_labels.isNotEmpty) {
-        final labelNames = _labels.map((l) => l.label).join(', ');
         flutterLocalNotificationsPlugin.show(
-          0,
-          'Scan Complete',
-          'You scanned: $labelNames',
+          1,
+          'Scan Result',
+          'You scanned a Carrot!',
           const NotificationDetails(
             android: AndroidNotificationDetails(
               'default_channel',
@@ -125,17 +86,24 @@ class _HomescreenState extends State<Homescreen> {
             ),
           ),
         );
+      } else {
+        print('No image selected');
       }
     } catch (e) {
-      setState(() => _isScanning = false);
+      print('Error picking image: $e');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error scanning image: $e')));
+      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
     }
+
+    setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final nutrition =
+        _detectedFruit != null ? nutritionInfo[_detectedFruit!] : null;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('NutriScan'),
@@ -143,15 +111,55 @@ class _HomescreenState extends State<Homescreen> {
         foregroundColor: Colors.white,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _isScanning ? null : _scanImage,
+        onPressed: _isLoading ? null : _pickImage,
         backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        tooltip: 'Pick Image',
+        heroTag: 'pickImageButton',
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child:
-            _isScanning
+            _isLoading
                 ? const CircularProgressIndicator(color: Colors.white)
                 : const Icon(Icons.camera_alt),
       ),
       body: Column(
         children: [
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 50,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 7,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemBuilder: (context, index) {
+                final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                final today = DateTime.now().weekday; // 1 = Mon, ..., 7 = Sun
+
+                final isToday = (index + 1) == today;
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isToday ? Colors.blue : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(
+                      days[index],
+                      style: TextStyle(
+                        color: isToday ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 16),
           if (_image != null)
             Padding(
@@ -162,59 +170,79 @@ class _HomescreenState extends State<Homescreen> {
               ),
             ),
           const SizedBox(height: 16),
-          if (_labels.isNotEmpty)
+          if (nutrition != null)
             Expanded(
-              child: ListView.builder(
-                itemCount: _labels.length,
-                itemBuilder: (context, index) {
-                  final label = _labels[index];
-                  final food = label.label.toLowerCase();
-                  final nutrition = nutritionInfo[food];
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Card(
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: nutrition.length,
+                      itemBuilder: (context, index) {
+                        final key = nutrition.keys.elementAt(index);
+                        final value = nutrition[key];
 
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            label.label,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                key,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              if (key == "RS")
+                                Row(
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    const StripePaymentscreen(
+                                                      key: Key(
+                                                        'stripe_payment_screen',
+                                                      ),
+                                                    ),
+                                          ),
+                                        );
+                                        print("RS 100 button pressed");
+                                      },
+                                      child: Text(
+                                        value ?? '',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              else
+                                Text(
+                                  value ?? '',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                            ],
                           ),
-                          Text(
-                            'Confidence: ${(label.confidence * 100).toStringAsFixed(1)}%',
-                          ),
-                          const SizedBox(height: 8),
-                          if (nutrition != null) ...[
-                            const Text(
-                              'Nutrition Info:',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            ...nutrition.entries.map(
-                              (e) => Text('${e.key}: ${e.value}'),
-                            ),
-                          ] else
-                            const Text("No nutrition info available."),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
-            )
-          else if (!_isScanning)
+            ),
+          if (nutrition == null)
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                'Scan a fruit or vegetable to see nutrition information.',
+                'Capture a food image to see its nutrition information.',
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ),
