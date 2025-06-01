@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class PaymentBottomSheet extends StatelessWidget {
+class PaymentBottomSheet extends StatefulWidget {
   const PaymentBottomSheet({super.key});
+
+  @override
+  State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
+}
+
+class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +65,49 @@ class PaymentBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Payment Successfully Send!')),
-                );
-              },
-              icon: const Icon(Icons.payment),
-              label: const Text('Pay \$100'),
+              onPressed:
+                  _isLoading
+                      ? null
+                      : () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+
+                        // Simulate payment process delay
+                        await Future.delayed(Duration(seconds: 2));
+
+                        setState(() {
+                          _isLoading = false;
+                        });
+
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Payment Successfully Sent!'),
+                          ),
+                        );
+                      },
+              icon:
+                  _isLoading
+                      ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: SpinKitFadingCircle(
+                          color: Colors.blue,
+                          size: 20.0,
+                        ),
+                      )
+                      : const Icon(Icons.payment),
+              label:
+                  _isLoading
+                      ? const Text('Processing...')
+                      : const Text('Pay Now'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 minimumSize: const Size(double.infinity, 50),
               ),
             ),
+
             const SizedBox(height: 10),
           ],
         ),

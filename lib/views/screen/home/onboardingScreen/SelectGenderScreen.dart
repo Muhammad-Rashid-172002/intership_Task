@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intership_task/views/screen/home/onboardingScreen/Hight&WeightScreen.dart';
 
 class Selectgenderscreen extends StatefulWidget {
@@ -11,6 +12,7 @@ class Selectgenderscreen extends StatefulWidget {
 }
 
 class _SelectgenderscreenState extends State<Selectgenderscreen> {
+  bool _isLoading = false;
   String? selectedGender;
 
   void selectGender(String gender) {
@@ -20,6 +22,7 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
   }
 
   Widget genderOption(String gender) {
+    bool _isLoading = false;
     bool isSelected = selectedGender == gender;
     return GestureDetector(
       onTap: () => selectGender(gender),
@@ -109,39 +112,49 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
             genderOption('Other'),
             const SizedBox(height: 200),
 
-            ElevatedButton(
-              onPressed: () async {
-                if (selectedGender != null) {
-                  await saveGenderToFirebase(selectedGender!);
+            _isLoading
+                ? const SpinKitFadingCircle(color: Colors.blue, size: 40.0)
+                : ElevatedButton(
+                  onPressed: () async {
+                    if (selectedGender != null) {
+                      setState(() {
+                        _isLoading = true;
+                      });
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => Hightweightscreen(
-                            selectedGender: selectedGender!,
-                          ),
+                      await saveGenderToFirebase(selectedGender!);
+
+                      setState(() {
+                        _isLoading = false;
+                      });
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => Hightweightscreen(
+                                selectedGender: selectedGender!,
+                              ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please select a gender')),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(300, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select a gender')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(300, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
           ],
         ),
       ),

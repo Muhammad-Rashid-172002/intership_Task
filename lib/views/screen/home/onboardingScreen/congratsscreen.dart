@@ -10,6 +10,7 @@ class Congratsscreen extends StatefulWidget {
 }
 
 class _CongratsscreenState extends State<Congratsscreen> {
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,14 +45,20 @@ class _CongratsscreenState extends State<Congratsscreen> {
             ),
             SizedBox(height: 180),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const GoogleAuthScreen(),
-                  ),
-                );
-              },
+              onPressed:
+                  _isLoading
+                      ? null
+                      : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GoogleAuthScreen(),
+                          ),
+                        );
+                        setState(() {
+                          _isLoading = true;
+                        });
+                      },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -60,10 +67,18 @@ class _CongratsscreenState extends State<Congratsscreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              child:
+                  _isLoading
+                      ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                      : const Text(
+                        'Next',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
             ),
           ],
         ),

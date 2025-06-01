@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intership_task/views/screen/home/Screen/stripe_payment/stripe_payment.dart';
@@ -22,16 +23,11 @@ class _HomescreenState extends State<Homescreen> {
 
   final Map<String, Map<String, String>> nutritionInfo = {
     "carrot": {
+      "RS": "100",
+      "Vitamin B": "214% of the RDI",
       "Calories": "41",
       "Vitamin A": "334% of the RDI",
-      "Vitamin K": "16% of the RDI",
-      "Fiber": "2.8g",
-      "Potassium": "7% of the RDI",
-      "Carbohydrates": "9.6g",
       "Sugar": "4.7g",
-      "Protein": "0.9g",
-      "Fat": "0.2g",
-      "RS": "100",
     },
   };
 
@@ -120,9 +116,14 @@ class _HomescreenState extends State<Homescreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child:
             _isLoading
-                ? const CircularProgressIndicator(color: Colors.white)
+                ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: SpinKitFadingCircle(color: Colors.white, size: 24.0),
+                )
                 : const Icon(Icons.camera_alt),
       ),
+
       body: Column(
         children: [
           const SizedBox(height: 16),

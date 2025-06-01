@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intership_task/views/screen/home/onboardingScreen/SelectDOB.dart';
 
 class Hightweightscreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class Hightweightscreen extends StatefulWidget {
 }
 
 class _HightweightscreenState extends State<Hightweightscreen> {
+  bool _isLoading = false;
   int selectedFeet = 5;
   int selectedInches = 9;
   int selectedWeight = 119;
@@ -197,10 +199,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
                         ),
                         const SizedBox(height: 10),
                         _buildPicker(
-                          items: List.generate(
-                            201,
-                            (i) => "${i + 50}",
-                          ), // 50 to 250 lbs
+                          items: List.generate(201, (i) => "${i + 50}"),
                           selectedIndex: selectedWeight - 50,
                           onSelectedItemChanged: (i) {
                             setState(() => selectedWeight = i + 50);
@@ -214,39 +213,57 @@ class _HightweightscreenState extends State<Hightweightscreen> {
             ),
             SizedBox(height: 150),
             // Elevated Button
-            ElevatedButton(
-              onPressed: () async {
-                String height = "$selectedFeet ft $selectedInches in";
-                String weight = "$selectedWeight lbs";
+            _isLoading
+                ? const SpinKitFadingCircle(color: Colors.blue, size: 40.0)
+                : ElevatedButton(
+                  onPressed: () async {
+                    if (selectedFeet != null) {
+                      setState(() {
+                        _isLoading = true;
+                      });
 
-                // Save height and weight to Firestore
-                await saveHeightWeightToFirebase(height, weight);
+                      await saveHeightWeightToFirebase(
+                        "${selectedFeet} ft ${selectedInches} in",
+                        selectedWeight.toString(),
+                      );
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => Selectdob(
-                          selectedGender: widget.selectedGender,
-                          height: height,
-                          weight: weight,
+                      setState(() {
+                        _isLoading = false;
+                      });
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => Selectdob(
+                                selectedGender: widget.selectedGender,
+                                height:
+                                    "${selectedFeet} ft ${selectedInches} in",
+                                weight: selectedWeight.toString(),
+                              ),
                         ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please select a Hight & Weight'),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(300, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(300, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
           ],
         ),
       ),

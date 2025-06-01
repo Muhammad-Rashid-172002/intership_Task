@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intership_task/views/screen/home/onboardingScreen/congratsscreen.dart';
 
 class Selectdob extends StatefulWidget {
@@ -20,6 +21,7 @@ class Selectdob extends StatefulWidget {
 }
 
 class _SelectdobState extends State<Selectdob> {
+  bool _isLoading = false;
   int selectedDay = 15;
   int selectedMonth = 5;
   int selectedYear = 2000;
@@ -246,23 +248,44 @@ class _SelectdobState extends State<Selectdob> {
             ],
           ),
           const SizedBox(height: 200),
-          ElevatedButton(
-            onPressed: () async {
-              await saveUserInfoToFirebase();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(300, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+          _isLoading
+              ? const SpinKitFadingCircle(color: Colors.blue, size: 40.0)
+              : ElevatedButton(
+                onPressed: () async {
+                  if (selectedDay != null) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    await saveUserInfoToFirebase();
+
+                    setState(() {
+                      _isLoading = false;
+                    });
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Congratsscreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please select a gender')),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(300, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Next',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            child: const Text(
-              'Next',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
         ],
       ),
     );
