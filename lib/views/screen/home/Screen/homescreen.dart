@@ -20,7 +20,6 @@ class _HomescreenState extends State<Homescreen> {
 
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  //  Nutrition info includes RS now
   final Map<String, Map<String, String>> nutritionInfo = {
     "carrot": {
       "Calories": "41",
@@ -48,10 +47,12 @@ class _HomescreenState extends State<Homescreen> {
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    const androidSettings = AndroidInitializationSettings(
-      'assets/app_icon/unnamed.png',
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
     );
-    const initSettings = InitializationSettings(android: androidSettings);
 
     await flutterLocalNotificationsPlugin.initialize(initSettings);
 
@@ -134,7 +135,6 @@ class _HomescreenState extends State<Homescreen> {
               itemBuilder: (context, index) {
                 final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                 final today = DateTime.now().weekday; // 1 = Mon, ..., 7 = Sun
-
                 final isToday = (index + 1) == today;
 
                 return Container(
@@ -160,6 +160,138 @@ class _HomescreenState extends State<Homescreen> {
               },
             ),
           ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Card(
+                  margin: const EdgeInsets.all(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          "3000",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          "Calories Remaining",
+                          style: TextStyle(fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: CircularProgressIndicator(
+                                value: 0.8,
+                                backgroundColor: Colors.grey[300],
+                                strokeWidth: 6,
+                                valueColor: const AlwaysStoppedAnimation(
+                                  Colors.black,
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.local_fire_department, size: 24),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Card(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 16,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  '180 g',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Text(
+                                  'Carbs left',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            CircleAvatar(
+                              backgroundColor: Colors.grey[200],
+                              child: Icon(Icons.rice_bowl, color: Colors.brown),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 16,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  '177 g',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Text(
+                                  'Protein left',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            CircleAvatar(
+                              backgroundColor: Colors.grey[200],
+                              child: Icon(Icons.egg, color: Colors.brown),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
           if (_image != null)
             Padding(
@@ -179,8 +311,6 @@ class _HomescreenState extends State<Homescreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: nutrition.length,
                       itemBuilder: (context, index) {
                         final key = nutrition.keys.elementAt(index);
@@ -198,37 +328,31 @@ class _HomescreenState extends State<Homescreen> {
                                   color: Colors.black,
                                 ),
                               ),
-                              if (key == "RS")
-                                Row(
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) =>
-                                                    const StripePaymentscreen(
-                                                      key: Key(
-                                                        'stripe_payment_screen',
-                                                      ),
-                                                    ),
+                              key == "RS"
+                                  ? TextButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20),
                                           ),
-                                        );
-                                        print("RS 100 button pressed");
-                                      },
-                                      child: Text(
-                                        value ?? '',
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
+                                        ),
+                                        isScrollControlled: true,
+                                        builder:
+                                            (context) =>
+                                                const PaymentBottomSheet(),
+                                      );
+                                    },
+                                    child: Text(
+                                      value ?? '',
+                                      style: const TextStyle(fontSize: 16),
                                     ),
-                                  ],
-                                )
-                              else
-                                Text(
-                                  value ?? '',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
+                                  )
+                                  : Text(
+                                    value ?? '',
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
                             ],
                           ),
                         );
@@ -237,8 +361,8 @@ class _HomescreenState extends State<Homescreen> {
                   ),
                 ),
               ),
-            ),
-          if (nutrition == null)
+            )
+          else
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(

@@ -48,15 +48,15 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      print("Saving gender for user: ${user.uid}");
+      print("Saving gender for user -----> ${user.uid}");
       try {
         await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
           'gender': gender,
         }, SetOptions(merge: true));
 
-        print("Gender saved: $gender");
+        print("Gender saved ------> $gender");
       } catch (e) {
-        print("Error saving gender: $e");
+        print("Error saving gender -----> $e");
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Failed to save gender: $e')));

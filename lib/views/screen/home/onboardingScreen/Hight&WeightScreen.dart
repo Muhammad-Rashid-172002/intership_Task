@@ -64,7 +64,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
 
         print("Height and Weight saved successfully.");
       } catch (e) {
-        print("Error saving height/weight: $e");
+        print("Error saving height/weight ------> $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to save height and weight')),
         );

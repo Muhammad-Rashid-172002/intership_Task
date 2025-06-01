@@ -76,14 +76,14 @@ class _SelectdobState extends State<Selectdob> {
         }, SetOptions(merge: true));
 
         print("Saved to Firestore:");
-        print("Gender: ${widget.selectedGender}");
-        print("Height: ${widget.height}");
-        print("Weight: ${widget.weight}");
-        print("DOB: $dob");
+        print("Gender -----> ${widget.selectedGender}");
+        print("Height -----> ${widget.height}");
+        print("Weight -----> ${widget.weight}");
+        print("DOB ------> $dob");
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("DOB saved successfully")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Date saved successfully in FireStore")),
+        );
 
         // Go to next screen
         Navigator.push(
@@ -91,7 +91,7 @@ class _SelectdobState extends State<Selectdob> {
           MaterialPageRoute(builder: (context) => Congratsscreen()),
         );
       } catch (e) {
-        print("Error saving DOB: $e");
+        print("Error saving DOB -------> $e");
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("Error saving DOB")));
