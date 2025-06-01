@@ -44,7 +44,7 @@ class _HomescreenState extends State<Homescreen> {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('assets/app_icon/unnamed.png');
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
