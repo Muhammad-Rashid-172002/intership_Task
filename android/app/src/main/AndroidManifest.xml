@@ -7,6 +7,10 @@
         android:label="NutriScan"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" android:exported="false"/>
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver" android:exported="false"/>
+        <service android:name="com.dexterous.flutterlocalnotifications.NotificationService" android:exported="false"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
