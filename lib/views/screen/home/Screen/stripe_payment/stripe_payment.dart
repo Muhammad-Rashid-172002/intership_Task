@@ -12,7 +12,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   bool _isLoading = false;
   String _cardNumber = '';
 
-  // Detect card brand by prefix
   Widget _getCardIcon(String cardNumber) {
     if (cardNumber.startsWith('4')) {
       return Image.network(
@@ -41,12 +40,14 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Close icon and TEST MODE label right aligned
+            // Close and TEST label
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.close, color: Colors.black, size: 16),
-                const SizedBox(width: 6),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(Icons.close, size: 18),
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -67,25 +68,12 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
             const Text(
               'Add your payment information',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'Card information',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
-
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -101,106 +89,71 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               ),
               child: Column(
                 children: [
-                  // Card Number with US label and card brand icon
-                  Row(
-                    children: [
-                      // Expanded card number input with card icon suffix
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            labelText: 'Card Number',
-
-                            border: const OutlineInputBorder(),
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: _getCardIcon(_cardNumber),
-                            ),
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {
-                            setState(() {
-                              _cardNumber = value;
-                            });
-                          },
-                        ),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Card Number',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _getCardIcon(_cardNumber),
                       ),
-                    ],
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() => _cardNumber = value);
+                    },
                   ),
-
                   const SizedBox(height: 12),
-
-                  // MM/YY, CVC, ZIP Code all in one row
                   Row(
                     children: [
-                      // MM/YY
                       Expanded(
                         child: TextField(
                           decoration: const InputDecoration(
                             labelText: 'MM/YY',
-
                             border: OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.datetime,
                         ),
                       ),
                       const SizedBox(width: 10),
-
-                      // CVC
                       Expanded(
                         child: TextField(
                           decoration: const InputDecoration(
                             labelText: 'CVC',
-
                             border: OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.number,
                         ),
                       ),
-                      const SizedBox(width: 10),
-
-                      // ZIP Code
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   TextField(
                     decoration: const InputDecoration(
                       labelText: 'ZIP Code',
-
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
                   ),
-
-                  // Name on Card
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton.icon(
               onPressed:
                   _isLoading
                       ? null
                       : () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-
-                        await Future.delayed(const Duration(seconds: 3));
-
-                        setState(() {
-                          _isLoading = false;
-                        });
-
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Payment Successfully Sent!'),
-                            ),
-                          );
-                        }
+                        setState(() => _isLoading = true);
+                        await Future.delayed(const Duration(seconds: 2));
+                        setState(() => _isLoading = false);
+                        if (!mounted) return;
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Payment Successfully Sent!'),
+                          ),
+                        );
                       },
               icon:
                   _isLoading
@@ -208,7 +161,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                         width: 24,
                         height: 24,
                         child: SpinKitFadingCircle(
-                          color: Colors.blue,
+                          color: Colors.white,
                           size: 20.0,
                         ),
                       )
@@ -222,7 +175,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 ),
               ),
             ),
-
             const SizedBox(height: 10),
           ],
         ),

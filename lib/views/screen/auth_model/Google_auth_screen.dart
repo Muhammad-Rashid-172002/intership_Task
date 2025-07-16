@@ -45,7 +45,7 @@ class _GoogleAuthScreenState extends State<GoogleAuthScreen> {
       await FirebaseAuth.instance.signInWithCredential(credential);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Homescreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(
