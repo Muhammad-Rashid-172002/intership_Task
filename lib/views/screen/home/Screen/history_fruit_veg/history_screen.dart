@@ -9,13 +9,23 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
-        title: const Text('Scan History'),
-        backgroundColor: Colors.green,
+        title: const Text(
+          'Scan History',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body:
           history.isEmpty
-              ? const Center(child: Text('No scans yet.'))
+              ? const Center(
+                child: Text(
+                  'No scans yet.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
               : ListView.builder(
                 itemCount: history.length,
                 itemBuilder: (context, index) {
@@ -26,7 +36,15 @@ class HistoryScreen extends StatelessWidget {
                   final nutrition = item['nutrition'] as Map<String, String>;
 
                   return Card(
+                    color: Colors.grey[850],
                     margin: const EdgeInsets.all(8),
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                        color: Colors.white, // White border line
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: ListTile(
                       leading: Image.file(
                         image,
@@ -34,24 +52,47 @@ class HistoryScreen extends StatelessWidget {
                         height: 50,
                         fit: BoxFit.cover,
                       ),
-                      title: Text(itemName.toString().toUpperCase()),
+                      title: Text(
+                        itemName.toString().toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ), // White text
+                      ),
                       subtitle: Text(
                         DateFormat('yyyy-MM-dd – HH:mm').format(time),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                        ), // Slightly lighter white
                       ),
                       onTap: () {
                         showDialog(
                           context: context,
                           builder:
                               (_) => AlertDialog(
-                                title: Text("Nutrition for $itemName"),
+                                backgroundColor: Colors.blueGrey[800],
+
+                                title: Text(
+                                  "Nutrition for $itemName",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children:
                                       nutrition.entries
                                           .map(
                                             (e) => ListTile(
-                                              title: Text(e.key),
-                                              trailing: Text(e.value),
+                                              title: Text(
+                                                e.key,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              trailing: Text(
+                                                e.value,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
                                           )
                                           .toList(),

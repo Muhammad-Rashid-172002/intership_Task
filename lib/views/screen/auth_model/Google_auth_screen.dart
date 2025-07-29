@@ -59,9 +59,10 @@ class _GoogleAuthScreenState extends State<GoogleAuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
         title: const Text('Google Sign-In'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
@@ -73,12 +74,16 @@ class _GoogleAuthScreenState extends State<GoogleAuthScreen> {
               "Let's Get Started!",
 
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             RichText(
               text: TextSpan(
                 text: 'Start exploring your account',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.white),
               ),
             ),
             const SizedBox(height: 20),
@@ -89,7 +94,7 @@ class _GoogleAuthScreenState extends State<GoogleAuthScreen> {
                 height: 45,
                 width: 200,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blue),
+                  border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -99,7 +104,7 @@ class _GoogleAuthScreenState extends State<GoogleAuthScreen> {
                     const SizedBox(width: 10),
                     const Text(
                       "Sign in with Google",
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ],
                 ),

@@ -31,14 +31,14 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
         height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: isSelected ? Colors.blue : Colors.transparent,
-          border: Border.all(color: Colors.black, width: 2),
+          color: isSelected ? Colors.cyanAccent : Colors.transparent,
+          border: Border.all(color: Colors.white, width: 2),
         ),
         alignment: Alignment.center,
         child: Text(
           gender,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
+            color: isSelected ? Colors.black : Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -75,9 +75,10 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
         title: const Text('Select Gender'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
@@ -90,7 +91,7 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 20),
@@ -99,7 +100,7 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
               child: Text(
                 'This step ensures that your\nnutrition plan is tailored just for you.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
             const SizedBox(height: 100),
@@ -113,7 +114,7 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
             const SizedBox(height: 200),
 
             _isLoading
-                ? const SpinKitFadingCircle(color: Colors.blue, size: 40.0)
+                ? const SpinKitFadingCircle(color: Colors.white, size: 40.0)
                 : ElevatedButton(
                   onPressed: () async {
                     if (selectedGender != null) {
@@ -143,7 +144,7 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.cyanAccent,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(300, 50),
                     shape: RoundedRectangleBorder(
@@ -152,7 +153,11 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
                   ),
                   child: const Text(
                     'Next',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
           ],

@@ -47,7 +47,7 @@ class _SelectdobState extends State<Selectdob> {
                 items[index],
                 style: TextStyle(
                   fontSize: 20,
-                  color: index == selectedIndex ? Colors.blue : Colors.black54,
+                  color: index == selectedIndex ? Colors.amber : Colors.black54,
                   fontWeight:
                       index == selectedIndex
                           ? FontWeight.bold
@@ -108,9 +108,10 @@ class _SelectdobState extends State<Selectdob> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
         title: const Text("Select Date of Birth"),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -119,7 +120,11 @@ class _SelectdobState extends State<Selectdob> {
           const SizedBox(height: 50),
           const Text(
             'What is Your Date of Birth?',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 10),
           RichText(
@@ -127,7 +132,7 @@ class _SelectdobState extends State<Selectdob> {
             text: TextSpan(
               text:
                   'This activity level helps you to tailor your fitness insights!',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
           const SizedBox(height: 100),
@@ -140,7 +145,7 @@ class _SelectdobState extends State<Selectdob> {
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 6),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.cyanAccent,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
@@ -173,7 +178,7 @@ class _SelectdobState extends State<Selectdob> {
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 6),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.cyanAccent,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
@@ -219,7 +224,7 @@ class _SelectdobState extends State<Selectdob> {
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 6),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.cyanAccent,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
@@ -249,7 +254,7 @@ class _SelectdobState extends State<Selectdob> {
           ),
           const SizedBox(height: 200),
           _isLoading
-              ? const SpinKitFadingCircle(color: Colors.blue, size: 40.0)
+              ? const SpinKitFadingCircle(color: Colors.white, size: 40.0)
               : ElevatedButton(
                 onPressed: () async {
                   if (selectedDay != null) {
@@ -274,8 +279,8 @@ class _SelectdobState extends State<Selectdob> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.cyanAccent,
+                  foregroundColor: Colors.black,
                   minimumSize: const Size(300, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

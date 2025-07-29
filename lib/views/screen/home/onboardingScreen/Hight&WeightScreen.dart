@@ -39,7 +39,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
                 items[index],
                 style: TextStyle(
                   fontSize: 20,
-                  color: index == selectedIndex ? Colors.blue : Colors.black54,
+                  color: index == selectedIndex ? Colors.amber : Colors.black,
                   fontWeight:
                       index == selectedIndex
                           ? FontWeight.bold
@@ -81,9 +81,10 @@ class _HightweightscreenState extends State<Hightweightscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
         title: const Text('Height & Weight'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
       body: Center(
@@ -95,7 +96,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                color: Colors.white,
               ),
             ),
             SizedBox(height: 20),
@@ -104,7 +105,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
               text: TextSpan(
                 text:
                     'This activity level helps you to tailor your fitness insights!',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
             SizedBox(height: 100),
@@ -122,7 +123,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
                     ),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.cyanAccent,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: const [
                         BoxShadow(
@@ -177,7 +178,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
                     ),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.cyanAccent,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: const [
                         BoxShadow(
@@ -214,7 +215,7 @@ class _HightweightscreenState extends State<Hightweightscreen> {
             SizedBox(height: 150),
             // Elevated Button
             _isLoading
-                ? const SpinKitFadingCircle(color: Colors.blue, size: 40.0)
+                ? const SpinKitFadingCircle(color: Colors.white, size: 40.0)
                 : ElevatedButton(
                   onPressed: () async {
                     if (selectedFeet != null) {
@@ -252,8 +253,8 @@ class _HightweightscreenState extends State<Hightweightscreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.cyanAccent,
+                    foregroundColor: Colors.black,
                     minimumSize: const Size(300, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
