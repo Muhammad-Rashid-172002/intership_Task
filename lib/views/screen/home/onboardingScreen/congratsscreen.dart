@@ -26,7 +26,7 @@ class _CongratsscreenState extends State<Congratsscreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Lottie.asset(
-                'assets/animation assets/congrats.json',
+                'assets/animation assets/Thank you!.json',
                 width: 200,
                 height: 200,
               ),

@@ -78,6 +78,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/animation assets/Animation - 1748579152630.json
+    - assets/animation assets/Thank you!.json
     - assets/animation assets/congrats.json
     - assets/assets images/google.png
     - assets/app_icon/unnamed.png

@@ -83,9 +83,9 @@ class _SelectdobState extends State<Selectdob> {
         print("Weight -----> ${widget.weight}");
         print("DOB ------> $dob");
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Date saved successfully in FireStore")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Date saved successfully")));
 
         // Go to next screen
         Navigator.push(

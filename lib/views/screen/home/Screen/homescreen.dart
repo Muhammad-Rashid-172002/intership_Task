@@ -133,9 +133,20 @@ class _HomeScreenState extends State<HomeScreen> {
     required String label,
     required String value,
     required IconData icon,
-
-    Color? iconColor,
   }) {
+    // Extract numeric value from string like "177 g"
+    final numericValue = int.tryParse(value.split(' ').first) ?? 0;
+
+    // Determine color based on thresholds
+    Color iconColor;
+    if (numericValue > 150) {
+      iconColor = Colors.orange;
+    } else if (numericValue > 100) {
+      iconColor = Colors.green;
+    } else {
+      iconColor = Colors.red;
+    }
+
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -147,7 +158,11 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             value,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 4),
           Text(
@@ -155,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: const TextStyle(fontSize: 13, color: Colors.white),
           ),
           const Spacer(),
-          Icon(icon, size: 20, color: iconColor ?? Colors.white),
+          Icon(icon, size: 20, color: iconColor),
         ],
       ),
     );
@@ -361,21 +376,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'Protein left',
                         value: '177 g',
                         icon: Icons.check_circle,
-                        iconColor: Colors.orange,
                       ),
                       const SizedBox(height: 10),
                       _buildMacroCard(
                         label: 'Carbs left',
                         value: '180 g',
                         icon: Icons.egg,
-                        iconColor: Colors.green,
                       ),
                       const SizedBox(height: 10),
                       _buildMacroCard(
                         label: 'Fat left',
                         value: '85 g',
                         icon: Icons.favorite,
-                        iconColor: Colors.red,
                       ),
                     ],
                   ),

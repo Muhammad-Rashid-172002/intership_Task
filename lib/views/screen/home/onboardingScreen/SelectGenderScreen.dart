@@ -82,85 +82,90 @@ class _SelectgenderscreenState extends State<Selectgenderscreen> {
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Select Your Gender',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                'This step ensures that your\nnutrition plan is tailored just for you.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-            const SizedBox(height: 100),
-
-            // Gender Options
-            genderOption('Male'),
-            const SizedBox(height: 20),
-            genderOption('Female'),
-            const SizedBox(height: 20),
-            genderOption('Other'),
-            const SizedBox(height: 200),
-
-            _isLoading
-                ? const SpinKitFadingCircle(color: Colors.white, size: 40.0)
-                : ElevatedButton(
-                  onPressed: () async {
-                    if (selectedGender != null) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-
-                      await saveGenderToFirebase(selectedGender!);
-
-                      setState(() {
-                        _isLoading = false;
-                      });
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => Hightweightscreen(
-                                selectedGender: selectedGender!,
-                              ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please select a gender')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.cyanAccent,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(300, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 40),
+              const Text(
+                'Select Your Gender',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-          ],
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'This step ensures that your\nnutrition plan is tailored just for you.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 100),
+
+              // Gender Options
+              genderOption('Male'),
+              const SizedBox(height: 20),
+              genderOption('Female'),
+              const SizedBox(height: 20),
+              genderOption('Other'),
+              const SizedBox(height: 200),
+
+              _isLoading
+                  ? const SpinKitFadingCircle(color: Colors.white, size: 40.0)
+                  : ElevatedButton(
+                    onPressed: () async {
+                      if (selectedGender != null) {
+                        setState(() {
+                          _isLoading = true;
+                        });
+
+                        await saveGenderToFirebase(selectedGender!);
+
+                        setState(() {
+                          _isLoading = false;
+                        });
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => Hightweightscreen(
+                                  selectedGender: selectedGender!,
+                                ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select a gender'),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.cyanAccent,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(300, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+            ],
+          ),
         ),
       ),
     );
